@@ -1,11 +1,40 @@
-name: codeQL analysis
+name: CodeQL Analysis Based on Detected Languages
 
 on:
   push:   
-    branches: main
+    branches: [main]
   pull_request:
-    branches: main
-  schedule:
-    - cron: '0 0 * * 0'
+    branches: [main]
+
+jobs:
+
+  detect-and-analyze:
+    name: Detect Languages and Run CodeQL Analysis
+    runs-on: ubuntu-latest
+
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v3
+
+    - name: Set up Python
+      uses: actions/setup-python@v4
+      with:
+        python-version: '3.10'
+
+    - name: Run language detection script
+      id: detect_languages
+      run: |
+        python detect_languages.py > languages.txt
+        languages=$(cat languages.txt)
+        echo "Detected languages: $languages"
+        echo "::set-output name=languages::$languages"
+
+    - name: Initialize CodeQL
+      uses: github/codeql-action/init@v2
+      with:
+        languages: ${{ steps.detect_languages.outputs.languages }}
+
+    - name: Perform CodeQL Analysis
+      uses: github/codeql-action/analyze@v2
 
     
