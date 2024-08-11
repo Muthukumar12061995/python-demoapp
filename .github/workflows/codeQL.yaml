@@ -1,4 +1,4 @@
-name: CodeQL Analysis Based on Detected Languages
+name: CodeQL Analysis
 
 on:
   workflow_dispatch: 
