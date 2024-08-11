@@ -35,8 +35,17 @@ jobs:
         
         echo "Languages detected:"
         cat languages.json
+        CODEQL_LANGUAGES="cpp,csharp,go,java,javascript,python,ruby,typescript,swift,kotlin,php"
+
+        # filtering languages
         languages=$(jq -r 'keys | join(",")' languages.json)
-        echo "::set-output name=languages::$languages"
+        echo "All detected languages: $languages"
+        
+        # Filter only CodeQL-supported languages
+        codeql_languages=$(echo "$languages" | tr ',' '\n' | grep -E "$(echo $CODEQL_LANGUAGES | tr ',' '|')" | tr '\n' ',' | sed 's/,$//')
+        
+        echo "CodeQL-supported languages: $codeql_languages"
+        echo "::set-output name=languages::$codeql_languages"
 
     - name: Initialize CodeQL
       uses: github/codeql-action/init@v2
