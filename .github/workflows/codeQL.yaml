@@ -21,7 +21,7 @@ jobs:
     - name: Run language detection script
       id: detect_languages
       run: |
-        python detect_languages.py > languages.txt
+        python3 detect_languages.py > languages.txt
         languages=$(cat languages.txt)
         echo "Detected languages: $languages"
         echo "::set-output name=languages::$languages"
