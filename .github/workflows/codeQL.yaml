@@ -13,17 +13,29 @@ jobs:
     - name: Checkout code
       uses: actions/checkout@v3
 
-    - name: Set up Python
-      uses: actions/setup-python@v4
-      with:
-        python-version: '3.10'
+    # - name: Set up Python
+    #   uses: actions/setup-python@v4
+    #   with:
+    #     python-version: '3.10'
 
-    - name: Run language detection script
+    # - name: Run language detection script
+    #   id: detect_languages
+    #   run: |
+    #     python3 detect_languages.py > languages.txt
+    #     languages=$(cat languages.txt)
+    #     echo "Detected languages: $languages"
+    #     echo "::set-output name=languages::$languages"
+
+    - name: Detect language using github API
       id: detect_languages
-      run: |
-        python3 detect_languages.py > languages.txt
-        languages=$(cat languages.txt)
-        echo "Detected languages: $languages"
+      runs: |
+        curl -s -H "Authorization: token ${{ github.token }}" \
+        https://api.github.com/repos/${{ github.repository }}/languages \
+        > languages.json
+        
+        echo "Languages detected:"
+        cat languages.json
+        languages=$(jq -r 'keys | join(",")' languages.json)
         echo "::set-output name=languages::$languages"
 
     - name: Initialize CodeQL
