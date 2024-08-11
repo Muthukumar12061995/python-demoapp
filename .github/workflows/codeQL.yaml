@@ -27,8 +27,8 @@ jobs:
     #     echo "::set-output name=languages::$languages"
 
     - name: Detect language using github API
-      id: detect_languages
-      runs: |
+      id: detect_languages 
+      run: |
         curl -s -H "Authorization: token ${{ github.token }}" \
         https://api.github.com/repos/${{ github.repository }}/languages \
         > languages.json
